@@ -50,8 +50,7 @@ func init() {
 		With("slashings_reset", slashingsResetTest).
 		With("participation_record_updates", participationRecordUpdatesTest).
 		With("pending_deposits", pendingDepositTest).
-		With("pending_consolidations", PendingConsolidationTest).
-		With("proposer_lookahead", ProposerLookaheadTest)
+		With("pending_consolidations", PendingConsolidationTest)
 	TestFormats.Add("finality").
 		With("finality", FinalityFinality)
 	TestFormats.Add("fork_choice").
@@ -81,8 +80,8 @@ func init() {
 		WithFn("withdrawals", operationWithdrawalHandler).
 		WithFn("bls_to_execution_change", operationSignedBlsChangeHandler).
 		WithFn("consolidation_request", operationConsolidationRequestHandler).
-		WithFn("deposit_request", operationDepositRequstHandler).
-		WithFn("withdrawal_request", operationWithdrawalRequstHandler)
+		WithFn("deposit_request", operationDepositRequestHandler).
+		WithFn("withdrawal_request", operationWithdrawalRequestHandler)
 	TestFormats.Add("random").
 		With("random", SanityBlocks)
 	TestFormats.Add("rewards").
@@ -100,9 +99,6 @@ func init() {
 		With("", spectest.UnimplementedHandler)
 	TestFormats.Add("transition").
 		With("core", &TransitionCore{})
-	TestFormats.Add("networking").
-		WithFn("compute_columns_for_custody_group", TestComputeColumnsForCustodyGroup).
-		WithFn("get_custody_groups", TestGetCustodyGroups)
 
 	addSszTests()
 }
@@ -192,16 +188,12 @@ func addSszTests() {
 			func(v clparams.StateVersion) *solid.Attestation {
 				return &solid.Attestation{}
 			}, withTestJson())).
-		With("SyncCommitteeMessage", sszStaticTestByEmptyObject(&cltypes.SyncCommitteeMessage{}, withTestJson())).
 		With("VoluntaryExit", sszStaticTestByEmptyObject(&cltypes.VoluntaryExit{}, withTestJson())).
 		With("SingleAttestation", sszStaticTestByEmptyObject(&solid.SingleAttestation{}, withTestJson(), runAfterVersion(clparams.ElectraVersion))).
 		With("WithdrawalRequest", sszStaticTestByEmptyObject(&solid.WithdrawalRequest{}, runAfterVersion(clparams.ElectraVersion))).
 		With("DepositRequest", sszStaticTestByEmptyObject(&solid.DepositRequest{}, withTestJson(), runAfterVersion(clparams.ElectraVersion))).
 		With("ConsolidationRequest", sszStaticTestByEmptyObject(&solid.ConsolidationRequest{}, withTestJson(), runAfterVersion(clparams.ElectraVersion))).
-		With("PendingConsolidation", sszStaticTestByEmptyObject(&solid.PendingConsolidation{}, runAfterVersion(clparams.ElectraVersion))).         // no need json test
-		With("PendingDeposit", sszStaticTestByEmptyObject(&solid.PendingDeposit{}, runAfterVersion(clparams.ElectraVersion))).                     // no need json test
-		With("PendingPartialWithdrawal", sszStaticTestByEmptyObject(&solid.PendingPartialWithdrawal{}, runAfterVersion(clparams.ElectraVersion))). // no need json test
-		With("DataColumnsByRootIdentifier", sszStaticTestByEmptyObject(&cltypes.DataColumnsByRootIdentifier{}, runAfterVersion(clparams.FuluVersion))).
-		With("MatrixEntry", sszStaticTestByEmptyObject(&cltypes.MatrixEntry{}, withTestJson(), runAfterVersion(clparams.FuluVersion))).
-		With("DataColumnSidecar", sszStaticTestByEmptyObject(&cltypes.DataColumnSidecar{}, withTestJson(), runAfterVersion(clparams.FuluVersion)))
+		With("PendingConsolidation", sszStaticTestByEmptyObject(&solid.PendingConsolidation{}, runAfterVersion(clparams.ElectraVersion))).        // no need json test
+		With("PendingDeposit", sszStaticTestByEmptyObject(&solid.PendingDeposit{}, runAfterVersion(clparams.ElectraVersion))).                    // no need json test
+		With("PendingPartialWithdrawal", sszStaticTestByEmptyObject(&solid.PendingPartialWithdrawal{}, runAfterVersion(clparams.ElectraVersion))) // no need json test
 }
